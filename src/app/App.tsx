@@ -66,7 +66,8 @@ export default function App() {
       'scenario-simulator',
       'advisory-insights',
       'chatbot',
-      'settings'
+      'settings',
+      'finance-profile'
     ];
     setShowBottomNav(mainScreens.includes(screen));
   };

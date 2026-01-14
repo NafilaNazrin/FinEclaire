@@ -45,33 +45,36 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* Header */}
+    /* Changed bg-white to support dark mode and added bottom padding for the nav bar */
+    <div className="min-h-screen bg-white dark:bg-slate-900 transition-colors pb-32">
+      
+      {/* Header - Stays dark/slate as per your dashboard style */}
       <div className="bg-gradient-to-br from-slate-900 to-slate-800 px-6 pt-12 pb-6">
         <button 
           onClick={() => navigate('dashboard')}
-          className="mb-6 text-white"
+          className="mb-6 text-white p-2 hover:bg-white/10 rounded-full transition-colors"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
-        <h1 className="text-2xl text-white mb-2">Finance Profile</h1>
+        <h1 className="text-2xl text-white font-bold mb-2">Finance Profile</h1>
         <p className="text-slate-300 text-sm">Build your financial baseline</p>
       </div>
 
       <div className="px-6 py-6 space-y-8">
+        
         {/* Monthly Income */}
         <div>
           <div className="flex items-center gap-2 mb-4">
             <DollarSign className="w-5 h-5 text-blue-600" />
-            <h2 className="text-lg text-slate-900">Monthly Income</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Monthly Income</h2>
           </div>
           
-          <div className="bg-slate-50 rounded-2xl p-6">
+          <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-transparent dark:border-slate-800">
             <div className="text-center mb-6">
-              <p className="text-4xl text-slate-900 mb-1">
+              <p className="text-4xl font-bold text-slate-900 dark:text-white mb-1">
                 ${monthlyIncome[0].toLocaleString()}
               </p>
-              <p className="text-sm text-slate-500">per month</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">per month</p>
             </div>
             
             <Slider
@@ -83,7 +86,7 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
               className="mb-4"
             />
             
-            <div className="flex justify-between text-xs text-slate-500">
+            <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
               <span>$1,000</span>
               <span>$15,000</span>
             </div>
@@ -94,7 +97,7 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Briefcase className="w-5 h-5 text-blue-600" />
-            <h2 className="text-lg text-slate-900">Income Type</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Income Type</h2>
           </div>
           
           <div className="grid grid-cols-2 gap-3">
@@ -104,13 +107,15 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
                 onClick={() => setSelectedIncomeType(type.id)}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   selectedIncomeType === type.id
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-slate-200 bg-white'
+                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/30'
                 }`}
               >
                 <div className="text-2xl mb-2">{type.icon}</div>
-                <p className={`text-sm ${
-                  selectedIncomeType === type.id ? 'text-blue-900' : 'text-slate-700'
+                <p className={`text-sm font-medium ${
+                  selectedIncomeType === type.id 
+                    ? 'text-blue-900 dark:text-blue-400' 
+                    : 'text-slate-700 dark:text-slate-400'
                 }`}>
                   {type.label}
                 </p>
@@ -123,7 +128,7 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
         <div>
           <div className="flex items-center gap-2 mb-4">
             <Target className="w-5 h-5 text-blue-600" />
-            <h2 className="text-lg text-slate-900">Risk Preference</h2>
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Risk Preference</h2>
           </div>
           
           <div className="space-y-3">
@@ -133,17 +138,21 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
                 onClick={() => setSelectedRiskProfile(profile.id)}
                 className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
                   selectedRiskProfile === profile.id
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-slate-200 bg-white'
+                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/30'
                 }`}
               >
-                <p className={`mb-1 ${
-                  selectedRiskProfile === profile.id ? 'text-blue-900' : 'text-slate-900'
+                <p className={`font-semibold mb-1 ${
+                  selectedRiskProfile === profile.id 
+                    ? 'text-blue-900 dark:text-blue-400' 
+                    : 'text-slate-900 dark:text-white'
                 }`}>
                   {profile.label}
                 </p>
                 <p className={`text-sm ${
-                  selectedRiskProfile === profile.id ? 'text-blue-700' : 'text-slate-500'
+                  selectedRiskProfile === profile.id 
+                    ? 'text-blue-700 dark:text-blue-300/70' 
+                    : 'text-slate-500 dark:text-slate-400'
                 }`}>
                   {profile.description}
                 </p>
@@ -154,8 +163,8 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
 
         {/* Financial Goals */}
         <div>
-          <h2 className="text-lg text-slate-900 mb-4">Financial Goals</h2>
-          <p className="text-sm text-slate-500 mb-4">Select all that apply</p>
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-2">Financial Goals</h2>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">Select all that apply</p>
           
           <div className="grid grid-cols-2 gap-3">
             {financialGoals.map((goal) => (
@@ -164,13 +173,15 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
                 onClick={() => toggleGoal(goal.id)}
                 className={`p-4 rounded-xl border-2 transition-all ${
                   selectedGoals.includes(goal.id)
-                    ? 'border-blue-600 bg-blue-50'
-                    : 'border-slate-200 bg-white'
+                    ? 'border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                    : 'border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-800/30'
                 }`}
               >
                 <div className="text-2xl mb-2">{goal.icon}</div>
-                <p className={`text-sm ${
-                  selectedGoals.includes(goal.id) ? 'text-blue-900' : 'text-slate-700'
+                <p className={`text-sm font-medium ${
+                  selectedGoals.includes(goal.id) 
+                    ? 'text-blue-900 dark:text-blue-400' 
+                    : 'text-slate-700 dark:text-slate-400'
                 }`}>
                   {goal.label}
                 </p>
@@ -182,7 +193,7 @@ export default function FinanceProfile({ navigate }: FinanceProfileProps) {
         {/* Save Button */}
         <Button
           onClick={() => navigate('dashboard')}
-          className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 rounded-xl"
+          className="w-full bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500 text-white py-6 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
         >
           Save Profile
         </Button>
