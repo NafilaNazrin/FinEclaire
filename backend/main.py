@@ -2,6 +2,7 @@ import json
 import os
 from urllib import error, request
 
+from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -14,6 +15,8 @@ from finance_engine.metrics import (
     trading_exposure,
 )
 from finance_engine.probabilities import stability_probability
+
+load_dotenv()
 
 app = FastAPI(title="FinÉclairé Backend")
 
@@ -75,7 +78,6 @@ def analyze_finances(payload: dict):
 
 def build_system_prompt(analysis: dict | None) -> str:
     analysis_context = json.dumps(analysis or {}, indent=2)
-
     return (
         "You are FinÉclairé's finance explanation assistant. "
         "You explain user metrics and app recommendations in simple language. "
@@ -90,14 +92,14 @@ def build_system_prompt(analysis: dict | None) -> str:
 
 
 def call_gemini(user_message: str, analysis: dict | None) -> str:
-    api_key = os.getenv("GEMINI_API_KEY")
+    api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         raise HTTPException(
             status_code=500,
-            detail="Missing GEMINI_API_KEY on backend. Add your key in backend env before using chat.",
+            detail="Missing GOOGLE_API_KEY. Add it to backend/.env and restart the backend.",
         )
 
-    model = os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
+    model = "gemini-1.5-flash"
     url = (
         f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
         f"?key={api_key}"
