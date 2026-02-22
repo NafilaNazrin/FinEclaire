@@ -192,7 +192,7 @@ export default function App() {
         return <Transparency navigate={navigate} />;
 
       case 'chatbot':
-        return <Chatbot navigate={navigate} />;
+        return <Chatbot navigate={navigate} analysis={analysis} />;
 
       case 'settings':
         return (
