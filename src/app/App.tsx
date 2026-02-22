@@ -8,7 +8,6 @@ import FinanceProfile from './components/FinanceProfile';
 import ExpenseTracking from './components/ExpenseTracking';
 import TradingInvestments from './components/TradingInvestments';
 import ScenarioSimulator from './components/ScenarioSimulator';
-import AdvisoryInsights from './components/AdvisoryInsights';
 import Transparency from './components/Transparency';
 import Settings from './components/Settings';
 import Chatbot from './components/Chatbot';
@@ -16,7 +15,6 @@ import BottomNav from './components/BottomNav';
 
 import { Analysis } from './types/analysis';
 
-/* ------------------ SCREENS ------------------ */
 export type Screen =
   | 'splash'
   | 'onboarding-welcome'
@@ -27,12 +25,10 @@ export type Screen =
   | 'expense-tracking'
   | 'trading-investments'
   | 'scenario-simulator'
-  | 'advisory-insights'
   | 'transparency'
   | 'chatbot'
   | 'settings';
 
-/* ------------------ EXPENSE TYPE ------------------ */
 export type Expense = {
   id: string;
   amount: number;
@@ -45,8 +41,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState<Screen>('splash');
   const [showBottomNav, setShowBottomNav] = useState(false);
 
-  /* ------------------ FINANCIAL STATE (SOURCE OF TRUTH) ------------------ */
-  const [income] = useState(50000); // later user editable
+  const [income] = useState(50000);
   const [expenses, setExpenses] = useState<Expense[]>([]);
 
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
@@ -54,7 +49,6 @@ export default function App() {
 
   const [isDarkMode, setIsDarkMode] = useState(false);
 
-  /* ------------------ THEME ------------------ */
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     if (savedTheme === 'dark') {
@@ -72,12 +66,10 @@ export default function App() {
     });
   };
 
-  /* ------------------ ADD EXPENSE (REAL DATA ENTRY POINT) ------------------ */
   const addExpense = (expense: Expense) => {
     setExpenses((prev) => [...prev, expense]);
   };
 
-  /* ------------------ BACKEND ANALYSIS ------------------ */
   const fetchAnalysis = async () => {
     if (expenses.length === 0) {
       setAnalysis(null);
@@ -90,6 +82,9 @@ export default function App() {
     const discretionaryTotal = expenses
       .filter((e) => e.category === 'discretionary')
       .reduce((sum, e) => sum + e.amount, 0);
+    const tradingCapital = expenses
+      .filter((e) => e.category === 'trading')
+      .reduce((sum, e) => sum + e.amount, 0);
 
     try {
       const res = await fetch('http://127.0.0.1:8000/analyze', {
@@ -99,7 +94,7 @@ export default function App() {
           income,
           monthly_expenses: monthlyExpenses,
           discretionary_expenses: discretionaryTotal,
-          trading_capital: 0,
+          trading_capital: tradingCapital,
           investable_funds: income,
         }),
       });
@@ -118,7 +113,6 @@ export default function App() {
     }
   };
 
-  /* ------------------ NAVIGATION ------------------ */
   const navigate = (screen: Screen) => {
     setCurrentScreen(screen);
 
@@ -127,7 +121,6 @@ export default function App() {
       'expense-tracking',
       'trading-investments',
       'scenario-simulator',
-      'advisory-insights',
       'chatbot',
       'settings',
       'finance-profile',
@@ -136,79 +129,51 @@ export default function App() {
     setShowBottomNav(mainScreens.includes(screen));
   };
 
-  /* ------------------ SCREEN RENDER ------------------ */
   const renderScreen = () => {
     switch (currentScreen) {
       case 'splash':
         return <SplashScreen onContinue={() => navigate('onboarding-welcome')} />;
-
       case 'onboarding-welcome':
         return <OnboardingWelcome onContinue={() => navigate('onboarding-ethics')} />;
-
       case 'onboarding-ethics':
         return <OnboardingEthics onContinue={() => navigate('onboarding-auth')} />;
-
       case 'onboarding-auth':
-        return (
-          <OnboardingAuth
-            onContinue={() => {
-              navigate('dashboard');
-            }}
-          />
-        );
-
+        return <OnboardingAuth onContinue={() => navigate('dashboard')} />;
       case 'dashboard':
         return (
           <Dashboard
             navigate={navigate}
             analysis={analysis}
             loading={loadingAnalysis}
+            expenses={expenses}
           />
         );
-
       case 'finance-profile':
         return <FinanceProfile navigate={navigate} />;
-
       case 'expense-tracking':
+        return <ExpenseTracking navigate={navigate} expenses={expenses} addExpense={addExpense} />;
+      case 'trading-investments':
         return (
-          <ExpenseTracking
+          <TradingInvestments
             navigate={navigate}
+            analysis={analysis}
             expenses={expenses}
-            addExpense={addExpense}
-            
+            income={income}
           />
         );
-
-      case 'trading-investments':
-        return <TradingInvestments navigate={navigate} />;
-
       case 'scenario-simulator':
         return <ScenarioSimulator navigate={navigate} analysis={analysis} />;
-
-      case 'advisory-insights':
-        return <AdvisoryInsights navigate={navigate} analysis={analysis} />;
-
       case 'transparency':
         return <Transparency navigate={navigate} />;
-
       case 'chatbot':
-        return <Chatbot navigate={navigate} />;
-
+        return <Chatbot navigate={navigate} analysis={analysis} />;
       case 'settings':
-        return (
-          <Settings
-            navigate={navigate}
-            isDarkMode={isDarkMode}
-            toggleTheme={toggleTheme}
-          />
-        );
-
+        return <Settings navigate={navigate} isDarkMode={isDarkMode} toggleTheme={toggleTheme} />;
       default:
         return null;
     }
   };
 
-  /* ------------------ AUTO-ANALYZE ON EXPENSE CHANGE ------------------ */
   useEffect(() => {
     fetchAnalysis();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -218,9 +183,7 @@ export default function App() {
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
       <div className="max-w-md mx-auto min-h-screen bg-white dark:bg-slate-900 relative">
         {renderScreen()}
-        {showBottomNav && (
-          <BottomNav currentScreen={currentScreen} navigate={navigate} />
-        )}
+        {showBottomNav && <BottomNav currentScreen={currentScreen} navigate={navigate} />}
       </div>
     </div>
   );

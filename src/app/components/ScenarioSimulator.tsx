@@ -29,14 +29,13 @@ export default function ScenarioSimulator({
   /* ------------------ SLIDER STATE (UI ONLY) ------------------ */
   const [discretionaryReduction, setDiscretionaryReduction] = useState([20]);
   const [tradingIncrease, setTradingIncrease] = useState([10]);
-  const [incomeChange, setIncomeChange] = useState([0]);
-  const [savingsIncrease, setSavingsIncrease] = useState([15]);
-
   /* ------------------ BACKEND PROBABILITIES ------------------ */
-  const { loss, neutral, gain } = analysis.probabilities;
+  const loss = Math.round(analysis.probabilities.loss * 100);
+  const neutral = Math.round(analysis.probabilities.neutral * 100);
+  const gain = Math.round(analysis.probabilities.gain * 100);
 
   const riskLabel =
-    loss > 50 ? 'High' : loss > 30 ? 'Moderate' : 'Low';
+    loss > 60 ? 'High' : loss > 40 ? 'Moderate' : 'Low';
 
   /* ------------------ UI COMPONENTS ------------------ */
   const ProbabilityBar = ({
@@ -171,35 +170,7 @@ export default function ScenarioSimulator({
             </ScenarioCard>
           </TabsContent>
 
-          <TabsContent value="income-change">
-            <ScenarioCard
-              title="Income Adjustment"
-              description="What if your income changes?"
-            >
-              <Slider
-                value={incomeChange}
-                onValueChange={setIncomeChange}
-                min={-30}
-                max={30}
-                step={5}
-              />
-            </ScenarioCard>
-          </TabsContent>
 
-          <TabsContent value="increase-savings">
-            <ScenarioCard
-              title="Boost Savings Rate"
-              description="What if you increase monthly savings?"
-            >
-              <Slider
-                value={savingsIncrease}
-                onValueChange={setSavingsIncrease}
-                min={5}
-                max={40}
-                step={5}
-              />
-            </ScenarioCard>
-          </TabsContent>
         </Tabs>
       </div>
     </div>
